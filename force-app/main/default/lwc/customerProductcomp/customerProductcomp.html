@@ -1,0 +1,208 @@
+<template>
+<lightning-card>
+<header class="slds-card__header slds-grid">
+  <div class="slds-media slds-media_center slds-has-flexi-truncate">
+	 <div class="slds-media__body slds-text-align_center slds-align_absolute-center">
+		<div class="slds-media__figure">
+		   <span class="slds-icon_container slds-icon-standard-account">
+			  <lightning-icon icon-name="standard:account" size="small"></lightning-icon>
+		   </span>
+		</div>
+		<h2 class="slds-text-heading_medium">A1 Kwality Electricals</h2>
+	 </div>
+  </div>
+</header>
+<div class="slds-p-around_medium">
+  <lightning-card title="Customer Details" class="center-title">
+	 <div class="slds-card__body">
+		<div class="slds-grid slds-wrap">
+		   <!-- Left Column -->
+		   <div class="slds-col slds-size_1-of-2">
+			  <div class="slds-form slds-form_stacked">
+				 <lightning-input data-name="Customer Name" label="Customer Name" type="text" value = {customerName} onchange={handleOnChange}></lightning-input>
+				 <lightning-input data-name="Phone" label="Phone" type="tel"  value = {phone} onchange={handleOnChange}></lightning-input>
+				 <!-- Add more input fields for customer details -->
+			  </div>
+		   </div>
+		   <!-- Right Column -->
+		   <div class="slds-col slds-size_1-of-2">
+			  <div class="slds-form slds-form_stacked">
+				 <lightning-input data-name="Email" label="Email" type="email" value = {email} onchange={handleOnChange}></lightning-input>
+				 <lightning-textarea data-name="Address" label="Address" rows="1" max-length="80" value = {address} onchange={handleOnChange} ></lightning-textarea>
+				 <!-- Add more input fields for customer details -->
+			  </div>
+		   </div>
+		</div>
+	 </div>
+	 <lightning-card title="Product Details" class="center-title">
+		<div class="slds-card__body">
+		   <div class="slds-grid slds-gutters">
+			  <div class="slds-col slds-size_2-of-12 slds-text-align_right">
+				 <span>Search Products</span>
+			  </div>
+			  <div class="slds-col slds-size_2-of-12 slds-grid slds-wrap">
+				 <span>
+					<lightning-input variant="label-hidden" label="Search Products" type="search" value={searchTerm} data-name="input" ></lightning-input>
+				 </span>
+			  </div>
+			  <div class="slds-m-top_small slds-m-bottom_medium slds-col slds-grid slds-wrap slds-text-align_left">
+					<lightning-button label="Add Product" title="Add Product" variant="brand" onclick={handleAddProduct} class="slds-m-left_x-small"></lightning-button>
+					<lightning-button label="Extra product" title="Extra Product" variant="brand" onclick={handleExtraProduct} class="slds-m-left_x-small"></lightning-button>
+			  </div>
+		   </div>
+		</div>
+	 </lightning-card>
+  </lightning-card>
+</div>
+<template if:true={isDatatable}>
+  <h1> "Selected Products"</h1>
+	 <div class="slds-p-around_medium custom-width">
+		<div class="scroll-container">
+		   <lightning-datatable
+			  data-id="datatable2"
+			  key-field="Id"
+			  data={selectedProductsdata}
+			  columns={col}
+			  oncellchange={handleQuantityChange} 
+			  onrowaction={handleRowSelection}
+			  hide-checkbox-column="true" 
+			  suppress-bottom-bar>
+			  <!--suppress-bottom-bar-->
+			  >
+		   </lightning-datatable>
+			</div><Br/>
+		   <div class="slds-float_right slds-size_3-of-12 slds-col slds-grid slds-wrap">
+			  Total Billing Price &nbsp;&nbsp; <lightning-input
+				 label="Total Billing Price"
+				 variant="label-hidden"
+				 type="number"
+				 formatter="currency"
+				 step="0.01" 
+				 value={calculatedAmount}
+				 disabled="true">
+			  </lightning-input>
+			</div><br/><br/>
+			<div class="slds-grid slds-wrap slds-size_1-of-1">
+			 	<div class="slds-col slds-size_3-of-12">
+			 	 	<div class="slds-size_4-of-12 slds-col slds-grid slds-wrap">
+				 		<lightning-input data-name="Discount" label="Discount" type="text" value = {discount} onchange={handleOnChange}></lightning-input>
+					</div>
+		   		</div>
+		   		<div class="slds-col ">
+			  		<div class="slds-float_right slds-size_4-of-12 slds-col slds-grid slds-wrap">
+				 		DiscountPrice  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <lightning-input label="Discount Amount" variant="label-hidden" type="number" formatter="currency" step="0.01"  value={discountValue}
+						disabled="true"> </lightning-input>
+			  		</div>
+		   		</div>
+			</div>
+			<div class="slds-float_right slds-size_3-of-12 slds-col slds-grid slds-wrap">
+			  Net Price &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <lightning-input
+				 label="Net Price"
+				 variant="label-hidden"
+				 type="number"
+				 formatter="currency"
+				 step="0.01" 
+				 value={netAmount}
+				 disabled="true">
+			  </lightning-input>
+			</div>
+	 </div>
+  <div class="slds-m-top_small slds-m-bottom_medium">
+        <lightning-button label="Preview" variant="brand" onclick={generatePDF} class="slds-m-left_x-small"></lightning-button>
+        <lightning-button label="Generate Invoice" variant="brand" onclick={handleAddCustomer} class="slds-m-left_x-small"></lightning-button>
+  </div>
+</template>
+extraProductFlag
+<template if:true={extraProductFlag}>
+	<P> </p>
+	<section role="dialog" tabindex="-1" aria-labelledby="modal-heading-07" aria-modal="true" aria-describedby="modal-content-id-7" class="slds-modal slds-fade-in-open">
+	 <div class="slds-modal__container">
+		<!-- Modal/Popup Box LWC header here -->
+		<header class="slds-modal__header">
+		   <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+			  <lightning-icon icon-name="utility:close"
+				 alternative-text="close"
+				 variant="inverse"
+				 size="small" ></lightning-icon>
+			  <span class="slds-assistive-text">Close</span>
+		   </button>
+		   <h2 id="modal-heading-07" class="slds-text-heading_medium slds-hyphenate">Extra product</h2>
+		</header>
+		<!-- Modal/Popup Box LWC body starts here -->
+		<div class="slds-modal__content slds-p-around_medium slds-modal_large"  id="modal-content-id-7">
+		   <div class="column">
+				Product Name <lightning-input data-name="Product Name" variant="label-hidden" label="Product Name" type="text" value = {productName} onchange={handleOnChange}></lightning-input>
+				MRP Price <lightning-input data-name="BasePrice" variant="label-hidden" label="BasePrice" type="number" formatter="currency" value = {exbasePrice} onchange={handleOnChange}></lightning-input>
+               	Quantity <lightning-input data-name="Quantity" variant="label-hidden" label="Quaniy" type="number" value = {exQuantity} onchange={handleOnChange}></lightning-input>
+                List Price <lightning-input data-name="List Price" variant="label-hidden" label="List Price" type="number" formatter="currency" value = {exListPrce} onchange={handleOnChange}></lightning-input>
+				Net price <lightning-input data-name="Net price" read-only= "true" variant="label-hidden" label="Net price" type="number" formatter="currency" value = {exNetPrice} onchange={handleOnChange}></lightning-input>
+            </div>
+		</div>
+		<!-- Modal/Popup Box LWC footer starts here -->
+		<footer class="slds-modal__footer">
+		   <button class="slds-button slds-button_neutral" onclick={closeModal}>Close</button>
+		   <button class="slds-button slds-button_neutral" onclick={handleSaveButton}>Save</button>
+		</footer>
+	 </div>
+  </section>
+	<!--<div class="modal-background" if:true={extraProductFlag}>
+		<header>Extra Product Information</header>
+        <div class="modal-content">
+            <div class="column">
+				Product Name <lightning-input data-name="Product Name" variant="label-hidden" label="Product Name" type="text" value = {productName} onchange={handleOnChange}></lightning-input>
+				Product Type <lightning-input data-name="Product Type" variant="label-hidden" label="Product Type" type="tel"  value = {PType} onchange={handleOnChange}></lightning-input>
+                
+            </div>
+            <div class="column">
+				Quantity <lightning-input data-name="Quantity" variant="label-hidden" label="Quaniy" type="number" value = {productName} onchange={handleOnChange}></lightning-input>
+                List Price <lightning-input data-name="List Price" variant="label-hidden" label="List Price" type="number" formatter="currency" value = {productName} onchange={handleOnChange}></lightning-input>
+				Net price <lightning-input data-name="Net price" variant="label-hidden" label="Net price" type="number" formatter="currency" value = {PType} onchange={handleOnChange}></lightning-input>
+            </div>
+            <footer>
+                <button class="slds-button slds-button_neutral" onclick={closeModal}>Close</button>
+            </footer>
+        </div>
+    </div>-->
+</template>
+<template if:false={isDatatable}>
+  <!-- Display a message if no rows are selected -->
+  <p>No products selected.</p>
+</template>
+<div if:true={isModalOpen}>
+  <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+	 <div class="slds-modal__container">
+		<!-- Modal/Popup Box LWC header here -->
+		<header class="slds-modal__header">
+		   <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+			  <lightning-icon icon-name="utility:close"
+				 alternative-text="close"
+				 variant="inverse"
+				 size="small" ></lightning-icon>
+			  <span class="slds-assistive-text">Close</span>
+		   </button>
+		   <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Searched Products</h2>
+		</header>
+		<!-- Modal/Popup Box LWC body starts here -->
+		<div class="slds-modal__content slds-p-around_medium slds-modal_large"  id="modal-content-id-1">
+		   <div style="height: 300px; overflow: auto;">
+			  <lightning-datatable 
+				 data-id="datatable1"
+				 key-field="Id" 
+				 data={products}
+				 columns={columns}
+				 onrowaction={handleCheckboxChange}
+				 oncellchange={handleQuantityChange}
+				 max-row-selection="100">  
+			  </lightning-datatable>
+		   </div>
+		</div>
+		<!-- Modal/Popup Box LWC footer starts here -->
+		<footer class="slds-modal__footer">
+		   <button class="slds-button slds-button_neutral" onclick={closeModal} title="Cancel">Cancel</button>
+		   <button class="slds-button slds-button_brand" onclick={submitDetails} title="OK">OK</button>
+		</footer>
+	 </div>
+  </section>
+</div>
+</lightning-card>
+</template>

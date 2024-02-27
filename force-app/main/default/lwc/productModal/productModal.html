@@ -1,0 +1,19 @@
+<template>
+
+     <div if:true={isModalOpen} class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+            <button class="slds-button slds-modal__close" title="Close" onclick={closeModal}>
+                <lightning-icon icon-name="utility:close" size="small"></lightning-icon>
+            </button>
+            <!-- Data Table to display search results -->
+            <div class="slds-p-around_medium">
+              <!--  <lightning-datatable
+                    key-field="Id"
+                    data={products}
+                    columns={columns}
+                    hide-checkbox-column="true">
+                </lightning-datatable> -->
+            </div>
+        </div>
+    </div>
+</template>

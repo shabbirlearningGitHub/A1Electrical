@@ -1,0 +1,110 @@
+<apex:page >
+    
+    <div style="background-color: #0070d2; color: #ffffff; text-align: center; font-size: 24px; font-weight: bold; padding: 10px;">
+        Invoice A1 Electricals
+    </div>
+    <h1 style="text-align: center;">Invoice</h1>
+    <h1>Customer Details</h1>
+    <div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_1-of-2" style="width: 50%;">
+            <p>Customer Name: <span id="customerNameSpan"></span></p>
+            <p>Phone: <span id="phoneSpan"></span></p>
+            <p>Email: <span id="emailSpan"></span></p>
+            <p>Address: <span id="addressSpan"></span></p>
+        </div>
+    </div>
+    <div style="margin-top: 20px; padding: 10px; border: 1px solid #dddddd;">
+        <table>
+            <thead style="background-color: #f2f2f2;">
+                <tr>
+                    <th style="padding: 10px;">Product Name</th>
+                    <th style="padding: 10px;">Quantity</th>
+                    <th style="padding: 10px;">Base Price</th>
+                    <th style="padding: 10px;">List Price</th>
+                    <th style="padding: 10px;">Net Price</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+            <!--<tbody>
+<apex:repeat value="{!data}" var="item">
+<tr>
+<td>{!item.Name}</td>                               
+<td>{!item.Quantity__c}</td>
+<td>{!item.Base_Price__c}</td>
+<td>{!item.List_Price__c}</td>
+<td>{!item.Net_Price__c}</td>
+</tr>
+</apex:repeat>
+</tbody>-->
+        </table>
+    </div>
+    <!--<p>Customer Name: <span id="customerNameSpan"></span></p>-->
+    <script>
+    var encodedData = '{!JSENCODE($CurrentPage.parameters.data)}';
+    var totalAmount = '{!JSENCODE($CurrentPage.parameters.totalAmount)}';
+    var customerData = '{!JSENCODE($CurrentPage.parameters.custData)}';
+    var decodedData = decodeURIComponent(encodedData);
+    var custData = decodeURIComponent(customerData);
+    
+    var data = JSON.parse(decodedData);
+    var detailsCust = JSON.parse(custData);
+    
+    // console.log('Data received from LWC:', data);
+    console.log('Data received from LWC totalAmount:', totalAmount);
+    console.log('Data received from LWC totalAmount:', custData);
+    //var parsedData = JSON.parse(detailsCust);
+    
+    // Access individual properties
+    var customerName = custData[0].Name;
+    console.log('Data received from LWC:', customerName);
+    
+    
+    
+    
+    
+    var tableBody = document.getElementById('tableBody');
+    
+    // Loop through the JSON data and create table rows
+    data.forEach(function(item) {
+        var row = document.createElement('tr');
+        var cell1 = document.createElement('td');
+        var cell2 = document.createElement('td');
+        var cell3 = document.createElement('td');
+        var cell4 = document.createElement('td');
+        var cell5 = document.createElement('td');
+        
+        cell1.innerHTML = item.Name; 
+        cell2.innerHTML = item.Quantity__c;
+        cell3.innerHTML = item.Base_Price__c; 
+        cell4.innerHTML = item.List_Price__c;
+        cell5.innerHTML = item.Net_Price__c; 
+        
+        
+        row.appendChild(cell1);
+        row.appendChild(cell2);
+        row.appendChild(cell3);
+        row.appendChild(cell4);
+        row.appendChild(cell5);
+        
+        
+        tableBody.appendChild(row);
+    });
+    function getSubstring(string, char1, char2) {
+        return string.slice(
+            string.indexOf(char1) + char1.length+3,
+            string.lastIndexOf(char2),
+        );
+            }
+            
+            //const str = 'bobby_hadz#com';
+            var customerData = '{!JSENCODE($CurrentPage.parameters.custData)}';
+            // 👇️ hadz
+            console.log(getSubstring(customerData, 'Name', '","Phone__c"'));
+        document.getElementById('customerNameSpan').innerHTML = getSubstring(customerData, 'Name', '","Phone__c"');
+        document.getElementById('customerNameSpan').innerHTML = getSubstring(customerData, 'Name', '","Phone__c"');
+        document.getElementById('phoneSpan').innerHTML = getSubstring(customerData, 'Phone__c', '","Email__c"');//custData[0].Phone__c;
+        document.getElementById('emailSpan').innerHTML =  getSubstring(customerData, 'Email__c', '","Address__c"');//custData[0].Email__c;
+        document.getElementById('addressSpan').textContent = getSubstring(customerData, 'Address__c', '","Id"');///custData[0].Address__c;
+        </script>
+</apex:page>
